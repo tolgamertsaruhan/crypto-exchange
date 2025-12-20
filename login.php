@@ -1,6 +1,7 @@
 <?php 
 session_start(); 
 include "contact.php";
+include "price-updater.php";
 
 if (isset($_POST['username']) && isset($_POST['password'])) {
 
@@ -32,6 +33,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 				$_SESSION["PASSWORD"] = $password;
 				$_SESSION["ID"] = $row['userid'];
 				$_SESSION["TYPE"] = $row['user_type'];
+				updateCryptoPrices($conn);
             	header("Location: user-main.php");
 		        exit();
             }else if($row['username'] === $username && $row['pword'] === $password && $row['user_type'] === "1")  {
@@ -39,6 +41,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 				$_SESSION["PASSWORD"] = $password;
 				$_SESSION["ID"] = $row['userid'];
 				$_SESSION["TYPE"] = $row['user_type'];
+				updateCryptoPrices($conn);
                 header("Location: admin-main.php");
 		        exit();
             }else{
