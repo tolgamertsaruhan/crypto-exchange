@@ -61,7 +61,8 @@ function updateCryptoPrices(mysqli $conn): void
            implode(",", $ids) . "&vs_currencies=usd";
 
     $ctx = stream_context_create([
-        "http" => ["timeout" => 8],
+        "http" => ["timeout" => 10, "method"  => "GET", "header"  => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n" .
+                                                                    "Accept: application/json\r\n"],
         "ssl"  => ["verify_peer" => true, "verify_peer_name" => true]
     ]);
 
