@@ -357,7 +357,8 @@ $usernameText = isset($usern[0][1]) ? $usern[0][1] : "User";
 $portfolioPage = isset($_GET['ppage']) ? max(1, (int) $_GET['ppage']) : 1;
 $historyPage   = isset($_GET['hpage']) ? max(1, (int) $_GET['hpage']) : 1;
 
-$perPage = 3;
+// Admin için 5, user için 3 satır
+$perPage = ($_SESSION['TYPE'] === "1") ? 5 : 3;
 
 // Pagination helper
 function renderPagination(string $baseUrl, int $currentPage, int $totalPages, string $pageParam): void
@@ -490,8 +491,9 @@ $stmtH->close();
 <div class="container mt-3">
 
     <?php if ($_SESSION['TYPE'] === "1") { ?>
-        <a href="user-management.php" class="btn btn-danger float-end">Back</a>
-        <div class="clearfix"></div>
+        <h3 class="mt-2">
+            User ID: <?= $ID ?> | Username: <?= htmlspecialchars($usernameText) ?>
+        </h3>
     <?php } ?>
 
     <?php if (isset($_SESSION['success'])): ?>
@@ -521,8 +523,15 @@ $stmtH->close();
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 15px;">
         <h3 style="margin: 0;">Portfolio</h3>
-        <div style="background-color: green; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 1.1rem;">
-            Balance: $<?= number_format($balance, 2); ?>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="background-color: green; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 1.1rem;">
+                Balance: $<?= number_format($balance, 2); ?>
+            </div>
+            <?php if ($_SESSION['TYPE'] === "1") { ?>
+                <a href="user-management.php" class="btn btn-danger">Back</a>
+            <?php } else { ?>
+                <a href="user-main.php" class="btn btn-danger">Back</a>
+            <?php } ?>
         </div>
     </div>
 
@@ -588,75 +597,93 @@ $stmtH->close();
         <h5 class="text-danger mt-2">Your portfolio is empty.</h5>
     <?php endif; ?>
 
-    <h3 class="mt-4">History</h3>
+    <?php if ($_SESSION['TYPE'] !== "1") { ?>
+        <h3 class="mt-4">History</h3>
 
-    <?php if ($totalHistoryRows > 0): ?>
-        <table class="table table-bordered table-dark table-hover">
-            <tr>
-                <th>Date</th>
-                <th>Symbol</th>
-                <th>Shares</th>
-                <th>Trade Price ($)</th>
-                <th>Profit/Loss ($)</th>
-            </tr>
-
-            <?php foreach ($historyRows as $row): ?>
-                <?php
-                $symbol = $row['symbol'];
-                $shares = (float) $row['shares'];
-
-                $dateValue = ($row['sell_date'] !== null) ? $row['sell_date'] : $row['purchase_date'];
-
-                $tradePriceValue = null;
-                if ($row['sell_price'] !== null) {
-                    $tradePriceValue = (float) $row['sell_price'];
-                } elseif ($row['purchase_price'] !== null) {
-                    $tradePriceValue = (float) $row['purchase_price'];
-                }
-
-                $tradePriceText = ($tradePriceValue === null) ? '' : number_format($tradePriceValue, 2);
-
-                $isSell = ($row['sell_date'] !== null || $row['sell_price'] !== null);
-
-                $plText = '';
-                $plValue = null;
-                if ($isSell && $row['profit_loss'] !== null && $row['profit_loss'] !== '') {
-                    $plValue = (float) $row['profit_loss'];
-                    $plText = number_format($plValue, 2);
-                }
-
-                $rowClass = '';
-                if (!$isSell) {
-                    $rowClass = 'history-buy';
-                } else {
-                    if ($plValue !== null && $plValue > 0) {
-                        $rowClass = 'history-sell-profit';
-                    } else {
-                        $rowClass = 'history-sell-loss';
-                    }
-                }
-                ?>
-                <tr class="<?= $rowClass; ?>">
-                    <td><?= htmlspecialchars((string)$dateValue); ?></td>
-                    <td><?= htmlspecialchars($symbol); ?></td>
-                    <td><?= number_format($shares, 8); ?></td>
-                    <td><?= $tradePriceText; ?></td>
-                    <td><?= $plText; ?></td>
+        <?php if ($totalHistoryRows > 0): ?>
+            <table class="table table-bordered table-dark table-hover">
+                <tr>
+                    <th>Date</th>
+                    <th>Symbol</th>
+                    <th>Shares</th>
+                    <th>Trade Price ($)</th>
+                    <th>Profit/Loss ($)</th>
                 </tr>
-            <?php endforeach; ?>
-        </table>
 
-        <?php
-        $hBase = ($_SESSION['TYPE'] === "1")
-            ? "portfolio.php?id=" . urlencode((string)$ID) . "&ppage=" . $portfolioPage
-            : "portfolio.php?ppage=" . $portfolioPage;
+                <?php foreach ($historyRows as $row): ?>
+                    <?php
+                    $symbol = $row['symbol'];
+                    $shares = (float) $row['shares'];
 
-        renderPagination($hBase, $historyPage, $totalHistoryPages, "hpage");
-        ?>
+                    $dateValue = ($row['sell_date'] !== null) ? $row['sell_date'] : $row['purchase_date'];
 
-    <?php else: ?>
-        <h5 class="text-danger mt-2">You don't have any history yet.</h5>
-    <?php endif; ?>
+                    $tradePriceValue = null;
+                    if ($row['sell_price'] !== null) {
+                        $tradePriceValue = (float) $row['sell_price'];
+                    } elseif ($row['purchase_price'] !== null) {
+                        $tradePriceValue = (float) $row['purchase_price'];
+                    }
+
+                    $tradePriceText = ($tradePriceValue === null) ? '' : number_format($tradePriceValue, 2);
+
+                    $isSell = ($row['sell_date'] !== null || $row['sell_price'] !== null);
+
+                    $plText = '';
+                    $plValue = null;
+                    if ($isSell && $row['profit_loss'] !== null && $row['profit_loss'] !== '') {
+                        $plValue = (float) $row['profit_loss'];
+                        $plText = number_format($plValue, 2);
+                    }
+
+                    $rowClass = '';
+                    if (!$isSell) {
+                        $rowClass = 'history-buy';
+                    } else {
+                        if ($plValue !== null && $plValue > 0) {
+                            $rowClass = 'history-sell-profit';
+                        } else {
+                            $rowClass = 'history-sell-loss';
+                        }
+                    }
+                    ?>
+                    <tr class="<?= $rowClass; ?>">
+                        <td><?= htmlspecialchars((string)$dateValue); ?></td>
+                        <td><?= htmlspecialchars($symbol); ?></td>
+                        <td><?= number_format($shares, 8); ?></td>
+                        <td><?= $tradePriceText; ?></td>
+                        <td><?= $plText; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+
+            <div style="position: relative; margin-top: 20px;">
+                <div style="display: flex; justify-content: center;">
+                    <?php
+                    $hBase = "portfolio.php?ppage=" . $portfolioPage;
+                    renderPagination($hBase, $historyPage, $totalHistoryPages, "hpage");
+                    ?>
+                </div>
+                
+                <div style="position: absolute; right: 0; top: 0; display: flex; gap: 15px; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <div style="width: 15px; height: 15px; background-color: #6f42c1; border-radius: 2px;"></div>
+                        <span style="font-size: 0.75rem; font-weight: 500;">Purchase</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <div style="width: 15px; height: 15px; background-color: #198754; border-radius: 2px;"></div>
+                        <span style="font-size: 0.75rem; font-weight: 500;">Sell (Profit)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <div style="width: 15px; height: 15px; background-color: #dc3545; border-radius: 2px;"></div>
+                        <span style="font-size: 0.75rem; font-weight: 500;">Sell (Loss)</span>
+                    </div>
+                </div>
+            </div>
+
+        <?php else: ?>
+            <h5 class="text-danger mt-2">You don't have any history yet.</h5>
+        <?php endif; ?>
+    <?php } ?>
 
 </div>
 
@@ -692,7 +719,7 @@ $stmtH->close();
                             <span class="info-value">$<span id="modal_price_display">-</span></span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Average Purchase Price:</span>
+                            <span class="info-label">Purchase Price:</span>
                             <span class="info-value">$<span id="modal_purchase_display">-</span></span>
                         </div>
                     </div>
