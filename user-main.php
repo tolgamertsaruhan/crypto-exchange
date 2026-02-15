@@ -4,8 +4,19 @@ include "contact.php";
 
 date_default_timezone_set("Europe/Istanbul");
 
-// 10 coin
-$allowed = ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","TON","DOT","AVAX"];
+// 100 coin
+$allowed = [
+    "BTC","ETH","BNB","SOL","XRP","ADA","DOGE","TON","DOT","AVAX",
+    "LINK","MATIC","UNI","LTC","ATOM","XLM","ALGO","VET","ICP","FIL",
+    "HBAR","APT","QNT","NEAR","GRT","SAND","MANA","AXS","THETA","RUNE",
+    "EOS","AAVE","MKR","SNX","COMP","CRV","YFI","SUSHI","BAL","REN",
+    "ZRX","OMG","KNC","LRC","BAND","ANKR","CHZ","ENJ","BAT","ZIL",
+    "CELO","WAVES","ICX","ONT","ZEC","DASH","XTZ","ETC","NEO","QTUM",
+    "DCR","LSK","SC","DGB","RVN","BTG","STEEM","STRAT","ARK","KMD",
+    "NXT","XEM","ARDR","BURST","SYS","VIA","BLOCK","NAV","PIVX","POT",
+    "MONA","NMC","PPC","RDD","VTC","BLK","BAY","CLOAK","PINK","XMY",
+    "EMC2","FAIR","START","KORE","XST","IOC","SWIFT","DMD","GRS","MLN"
+];
 $in = "'" . implode("','", $allowed) . "'";
 
 // pagination

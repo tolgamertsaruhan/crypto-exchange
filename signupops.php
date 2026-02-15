@@ -24,9 +24,10 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         }
 
         $usertype = "0";
-        $sql2 = "INSERT INTO users(username, pword, user_type) VALUES(?, ?, ?)";
+        $balance = 5000;
+        $sql2 = "INSERT INTO users(username, pword, user_type, balance) VALUES(?, ?, ?, ?)";
         $stmt= $conn->prepare($sql2);
-        $stmt->bind_param('sss', $_POST['username'], $_POST['password'], $usertype);
+        $stmt->bind_param('sssd', $_POST['username'], $_POST['password'], $usertype, $balance);
         $stmt->execute();
         //$result = mysqli_query($conn, $control);
 
