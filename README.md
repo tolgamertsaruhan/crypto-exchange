@@ -74,12 +74,6 @@ The application uses **PHP** for server side logic, **MySQL** for persistent dat
 
 ---
 
-## Trading System
-
-The application provides a simulated cryptocurrency trading environment using a virtual account balance.
-
----
-
 ## Application Flow
 
 ### User Flow
@@ -138,22 +132,14 @@ User Management
 
 | Technology        | Purpose                                   |
 | ----------------- | ----------------------------------------- |
-| **PHP**           | Backend and server-side application logic |
+| **PHP**           | Backend and server side application logic |
 | **MySQL**         | Persistent data storage                   |
 | **HTML5**         | Application structure                     |
 | **CSS3**          | Custom styling                            |
 | **Bootstrap 5**   | Responsive UI components                  |
-| **JavaScript**    | Client-side interactions                  |
+| **JavaScript**    | Client side interactions                  |
 | **CoinGecko API** | Cryptocurrency market data                |
 | **Git / GitHub**  | Version control                           |
-
----
-
-## Project Background
-
-The project was originally developed as a cryptocurrency exchange simulation with a focus on database driven application design, user management, market data, and trading workflows.
-
-The implementation evolved beyond the initial project scope to include a broader cryptocurrency dataset, persistent daily market prices, portfolio management, selling functionality, transaction tracking, and profit/loss calculations.
 
 ---
 
